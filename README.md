@@ -1,67 +1,67 @@
-### Idea: Simple Blogging Platform
+### Idea: Simple Book Library Application
 
 #### Overview
 Create a small microservice application with two services:
-1. **Post Service**: Manages the creation, retrieval, updating, and deletion of blog posts.
-2. **Comment Service**: Handles comments on blog posts.
+1. **Book Service**: Manages the catalog of books.
+2. **Review Service**: Allows users to add and retrieve reviews for books.
 
 ### Services and Their Responsibilities
 
-**Post Service**:
+**Book Service**:
 - **Endpoints**:
-  - `GET /posts`: Retrieve a list of all blog posts.
-  - `GET /posts/{post_id}`: Retrieve details of a specific post by its ID.
-  - `POST /posts`: Create a new blog post.
-  - `PUT /posts/{post_id}`: Update details of an existing blog post.
-  - `DELETE /posts/{post_id}`: Delete a blog post.
+  - `GET /books`: Retrieve a list of all books.
+  - `GET /books/{book_id}`: Retrieve details of a specific book by its ID.
+  - `POST /books`: Add a new book to the catalog.
+  - `PUT /books/{book_id}`: Update details of an existing book.
+  - `DELETE /books/{book_id}`: Remove a book from the catalog.
 
-**Comment Service**:
+**Review Service**:
 - **Endpoints**:
-  - `GET /comments/{post_id}`: Retrieve all comments for a specific blog post.
-  - `POST /comments/{post_id}`: Add a new comment to a specific blog post.
-  - `PUT /comments/{comment_id}`: Update an existing comment.
-  - `DELETE /comments/{comment_id}`: Delete a comment.
+  - `GET /reviews/{book_id}`: Retrieve all reviews for a specific book.
+  - `POST /reviews/{book_id}`: Add a new review for a specific book.
+  - `PUT /reviews/{review_id}`: Update an existing review.
+  - `DELETE /reviews/{review_id}`: Delete a review.
 
 ### Example Use Case
 
-#### 1. Post Service
-- **Retrieve Posts**: Users can view all blog posts.
-- **Post Details**: Users can get detailed information about a specific blog post, such as the title, content, and author.
-- **Manage Posts**: Authors can create new blog posts, update existing posts, or delete their posts.
+#### 1. Book Service
+- **Retrieve Books**: A user can view all books available in the library.
+- **Book Details**: A user can get detailed information about a specific book, such as the title, author, and summary.
+- **Manage Books**: An admin can add new books, update existing book details, or remove books from the catalog.
 
-#### 2. Comment Service
-- **View Comments**: Users can read comments on a specific blog post.
-- **Add Comment**: Users can submit comments on a blog post they have read.
-- **Update/Delete Comment**: Users can modify or delete their own comments.
+#### 2. Review Service
+- **View Reviews**: A user can read reviews for a specific book to help decide if they want to read it.
+- **Add Review**: A user can submit a review for a book they have read.
+- **Update/Delete Review**: A user can modify or delete their own reviews.
 
 ### Communication Between Services
-The Comment Service will need to fetch post details from the Post Service to ensure that comments are linked to valid posts. This can be done through HTTP requests between the services.
+The Review Service will need to fetch book details from the Book Service to ensure that reviews are linked to valid books. This can be done through HTTP requests between the services.
 
 ### Example Scenario
 
-1. **User Browses Posts**:
-   - The user sends a GET request to the Post Service endpoint `/posts` and receives a list of blog posts.
+1. **User Browses Books**:
+   - The user sends a GET request to the Book Service endpoint `/books` and receives a list of books.
 
-2. **User Views Post Details**:
-   - The user selects a post and sends a GET request to `/posts/{post_id}` to view its details.
+2. **User Views Book Details**:
+   - The user selects a book and sends a GET request to `/books/{book_id}` to view its details.
 
-3. **User Reads Comments**:
-   - The user sends a GET request to the Comment Service endpoint `/comments/{post_id}` to read comments for the selected post.
+3. **User Reads Reviews**:
+   - The user sends a GET request to the Review Service endpoint `/reviews/{book_id}` to read reviews for the selected book.
 
-4. **User Adds a Comment**:
-   - After reading the post, the user sends a POST request to `/comments/{post_id}` with their comment content.
+4. **User Adds a Review**:
+   - After reading the book, the user sends a POST request to `/reviews/{book_id}` with their review content.
 
-5. **User Updates or Deletes Comment**:
-   - The user can send a PUT request to `/comments/{comment_id}` to update their comment or a DELETE request to remove it.
+5. **User Updates or Deletes Review**:
+   - The user can send a PUT request to `/reviews/{review_id}` to update their review or a DELETE request to remove it.
 
 ### Deployment and Scaling
 - **Containerization**: Use Docker to containerize each service for consistent and isolated environments.
 - **Orchestration**: Use Docker Compose or Kubernetes to manage the deployment of both services.
-- **Database**: Use separate databases for each service to maintain independence, such as a relational database (e.g., PostgreSQL) for the Post Service and a document-based database (e.g., MongoDB) for the Comment Service.
+- **Database**: Use separate databases for each service to maintain independence, such as a relational database (e.g., PostgreSQL) for the Book Service and a document-based database (e.g., MongoDB) for the Review Service.
 
 ### Monitoring and Maintenance
 - **Logging**: Implement logging to track requests and errors in each service.
 - **Monitoring**: Use tools like Prometheus and Grafana to monitor the health and performance of the services.
-- **Scaling**: Ensure that each service can be scaled independently based on demand, such as adding more instances of the Comment Service if it receives high traffic.
+- **Scaling**: Ensure that each service can be scaled independently based on demand, such as adding more instances of the Review Service if it receives high traffic.
 
-This simple blogging platform demonstrates how microservices can be used to build a scalable and maintainable system with clear separation of concerns.
+This simple book library application demonstrates how microservices can be used to build a scalable and maintainable system with clear separation of concerns.
