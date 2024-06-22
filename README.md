@@ -34,9 +34,6 @@ Create a small microservice application with two services:
 - **Add Review**: A user can submit a review for a book they have read.
 - **Update/Delete Review**: A user can modify or delete their own reviews.
 
-### Communication Between Services
-The Review Service will need to fetch book details from the Book Service to ensure that reviews are linked to valid books. This can be done through HTTP requests between the services.
-
 ### Example Scenario
 
 1. **User Browses Books**:
@@ -65,3 +62,86 @@ The Review Service will need to fetch book details from the Book Service to ensu
 - **Scaling**: Ensure that each service can be scaled independently based on demand, such as adding more instances of the Review Service if it receives high traffic.
 
 This simple book library application demonstrates how microservices can be used to build a scalable and maintainable system with clear separation of concerns.
+
+# Communication Between Services
+
+To link reviews to valid books, the Review Service will communicate with the Book Service to ensure that the book ID exists and to retrieve book details when needed. This is done through HTTP requests between the services.
+
+## Basic Workflow
+
+- **User Requests:** When a user interacts with the application (e.g., viewing a book's details or submitting a review), the application sends requests to the relevant services.
+- **Service Coordination:** The services coordinate to process these requests and provide the necessary data.
+
+## Scenario Walkthrough
+
+### User Browses Books
+
+- The user sends a `GET` request to the Book Service endpoint `/books` and receives a list of books.
+
+### User Views Book Details
+
+- The user selects a book and sends a `GET` request to `/books/{book_id}` to view its details.
+
+### User Reads Reviews
+
+- The user sends a `GET` request to the Review Service endpoint `/reviews/{book_id}` to read reviews for the selected book.
+- The Review Service, to ensure the book exists and get its details, sends a `GET` request to the Book Service at `/books/{book_id}`.
+- Once the Book Service confirms the book's existence, the Review Service retrieves the reviews from its database and returns them to the user.
+
+### User Adds a Review
+
+- After reading the book, the user submits a review by sending a `POST` request to `/reviews/{book_id}` with the review content.
+- The Review Service validates the book ID by sending a `GET` request to the Book Service at `/books/{book_id}`.
+- Once validated, the Review Service saves the review to its database and acknowledges the submission to the user.
+
+### User Updates or Deletes Review
+
+- To update or delete a review, the user sends a `PUT` or `DELETE` request to `/reviews/{review_id}`.
+- The Review Service processes the request, updates or deletes the review in its database, and responds to the user.
+
+## Communication Protocol
+
+- **HTTP Requests:** The services communicate via HTTP requests, where one service makes a request to an endpoint exposed by another service.
+- **Service Discovery:** Each service knows the address and endpoints of the other service, enabling them to send requests accurately.
+
+## Error Handling
+
+- **Validation:** Before any action, the Review Service validates book IDs by checking with the Book Service to prevent invalid reviews.
+- **Failure Response:** If a book ID is not found, the Book Service returns an error response, which the Review Service then relays to the user.
+
+## Example API Requests
+
+### Review Service Validates Book ID
+
+```http
+GET /books/{book_id} HTTP/1.1
+Host: book-service.example.com
+```
+
+```Response
+{
+  "id": 1,
+  "title": "Book One",
+  "author": "Author One",
+  "summary": "Summary One"
+}
+```
+If the book ID is valid, the Review Service processes the review.
+
+```User Submits Review
+POST /reviews/{book_id} HTTP/1.1
+Host: review-service.example.com
+Content-Type: application/json
+
+{
+  "review_id": 101,
+  "content": "Great book!",
+  "rating": 5
+}
+```
+```Response:
+{
+  "message": "Review added successfully"
+}
+
+```

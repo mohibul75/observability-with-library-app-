@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  book-service:
+    environment:
+      - DATABASE_HOST=book-db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=bookdb
+      - DATABASE_USER=bookuser
+      - DATABASE_PASSWORD=bookpassword
+      - SECRET_KEY=django-insecure-d#9m4to=h0nkx+^y+ek*7(bd3m0@1&m&^5r16ke75q+*9zm8i_
+      - DEBUG=True
+      - OTEL_COLLECTOR_ENDPOINT=otel-collector:4317
+    restart: always
+
+  review-service:
+    environment:
+      - DATABASE_HOST=review-db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=reviewdb
+      - DATABASE_USER=reviewuser
+      - DATABASE_PASSWORD=reviewpassword
+      - SECRET_KEY=django-insecure-40-u_*sn6w44=2$-z()6&dv-_h1qqm@t#a82z4+j&y^$7=e_l5
+      - DEBUG=True
+      - OTEL_COLLECTOR_ENDPOINT=otel-collector:4317
+      - BOOK_SERVICE_URL=http://book-service
+    restart: always
+
+  book-db:
+    environment:
+      POSTGRES_DB: bookdb
+      POSTGRES_USER: bookuser
+      POSTGRES_PASSWORD: bookpassword
+    restart: always
+
+  review-db:
+    environment:
+      POSTGRES_DB: reviewdb
+      POSTGRES_USER: reviewuser
+      POSTGRES_PASSWORD: reviewpassword
+    restart: always
+
+  grafana:
+    environment:
+     - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: always

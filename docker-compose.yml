@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+  book-service:
+    build:
+      context: ./book_service
+    container_name: book-service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - book-db
+
+  review-service:
+    build:
+      context: ./review_service
+    container_name: review-service
+    ports:
+      - "8001:8000"
+    depends_on:
+      - review-db
+
+  book-db:
+    image: postgres:15
+    container_name: book-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - book-db-data:/var/lib/postgresql/data
+
+  review-db:
+    image: postgres:15
+    container_name: review-db
+    ports:
+      - "5433:5432"
+    volumes:
+      - review-db-data:/var/lib/postgresql/data
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    ports:
+      - "4317"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    ports:
+      - "3200:3100"
+      - "4317"
+    command: [ "-config.file=/etc/tempo/tempo.yaml" ]
+    volumes:
+      - ./tempo.yaml:/etc/tempo/tempo.yaml
+
+volumes:
+  book-db-data:
+  review-db-data:
